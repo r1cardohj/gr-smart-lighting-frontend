@@ -21,7 +21,7 @@
   
 <script setup>
 import client from '@/utils/api';
-import { onBeforeMount, onMounted, ref } from 'vue';
+import {onMounted, ref } from 'vue';
 
 let tableData = ref([])
 

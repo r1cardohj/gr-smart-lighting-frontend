@@ -29,13 +29,17 @@ const handleClick = () => {
 console.log('click')
 }
 
-onMounted(() => {
+function getDevices() {
     client.get('/device/').then((response) => {
        let devices = response.data.data 
        for (let i = 0; i < devices.length; i++) {
         tableData.value.push(devices[i])
        }
     })
+}
+
+onMounted(() => {
+    getDevices()
 })
   
 </script>

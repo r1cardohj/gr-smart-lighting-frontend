@@ -3,7 +3,7 @@
       <el-table-column fixed prop="id" label="ID" width="50" />
       <el-table-column prop="name" label="组名" width="120" />
       <el-table-column prop="description" label="描述" width="120" />
-      <el-table-column fixed="right" label="Operations" min-width="120">
+      <el-table-column fixed="right" label="操作" min-width="120">
         <template #default>
           <el-button link type="primary" size="small" @click="handleClick">
             编辑
@@ -14,7 +14,7 @@
     </el-table>
   </template>
   
-<script lang="ts" setup>
+<script setup>
 const handleClick = () => {
 console.log('click')
 }

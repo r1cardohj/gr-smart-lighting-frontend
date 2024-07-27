@@ -1,3 +1,9 @@
+<script setup>
+const handleClick = () => {
+console.log('click')
+}
+
+</script>
 <template>
     <el-table :data="tableData" style="width: 100%">
       <el-table-column fixed prop="id" label="ID" width="50" />
@@ -12,14 +18,7 @@
         </template>
       </el-table-column>
     </el-table>
-  </template>
-  
-<script setup>
-const handleClick = () => {
-console.log('click')
-}
-
-</script>
+</template>
 
 <style>
 </style>

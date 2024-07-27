@@ -1,7 +1,8 @@
 <script setup>
 import client from '@/utils/api';
-import { ElMessage, ElNotification } from 'element-plus';
-import {onMounted, ref, resolveComponent } from 'vue';
+import { ElNotification } from 'element-plus';
+import { onMounted, ref } from 'vue';
+import router from '@/router/router';
 
 const tableData = ref([])
 const selectedData = ref([])
@@ -19,9 +20,7 @@ const handleSelect = (devices) => {
 function getDevices() {
     client.get('/device/').then((response) => {
        let devices = response.data.data 
-       for (let i = 0; i < devices.length; i++) {
-        tableData.value.push(devices[i])
-       }
+       tableData.value = devices
     })
 }
 
@@ -41,6 +40,7 @@ function connectOrClose(device) {
                 message: err,
                 type: "error"
             })
+            device.isOnline = !device.isOnline
         }
     )
 }
@@ -55,13 +55,26 @@ function delDevices() {
             ElNotification({
             title: "Success",
             message: `device ${selectedDeviceId} is delete.`,
-            type: "success"
-        })}).catch((err) => ElNotification({
+            type: "success" })
+            //重新获取设备列表
+            getDevices()
+        }).catch((err) => ElNotification({
             title: "Error",
             message: err,
             type: "error"
         }))
     }
+    console.log(tableData.value);
+}
+
+function toCreatePage() {
+    router.push('device/create')
+}
+
+function toEditPage(device) {
+    router.push({
+        path: `device/edit/${device.id}`,
+    })
 }
 
 
@@ -86,18 +99,18 @@ onMounted(() => {
       <el-table-column prop="lightingType" label="照明类型" width="120" />
       <el-table-column fixed="right" label="Operations" min-width="120">
         
-        <template #default>
-          <el-button link type="primary" size="small" @click="handleClick">
+        <template v-slot="scope">
+          <el-button link type="primary" size="small" >
             详情
           </el-button>
-          <el-button link type="primary" size="small">编辑</el-button>
+          <el-button link type="primary" size="small" @click="toEditPage(scope.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <div style="">
-    <el-button @click="setCurrent(tableData[1])">新增</el-button>
+    <div>
+    <el-button @click="toCreatePage">新增</el-button>
     <el-button @click="delDevices">删除</el-button>
-  </div>
+    </div>
 </template>
   
 <style>

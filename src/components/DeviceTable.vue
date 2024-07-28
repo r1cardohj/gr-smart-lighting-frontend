@@ -51,7 +51,6 @@ function delDevices() {
         client.post('/device/delete', {
             id : selectedDeviceId
         }).then(() => {
-            tableData.value = tableData.value.filter((item) => item != selectedData.value[i])
             ElNotification({
             title: "Success",
             message: `device ${selectedDeviceId} is delete.`,

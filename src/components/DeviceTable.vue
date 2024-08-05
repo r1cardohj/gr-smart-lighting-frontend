@@ -106,11 +106,15 @@ onMounted(() => {
         </template>
       </el-table-column>
     </el-table>
-    <div>
+    <div class="btn-group">
     <el-button @click="toCreatePage">新增</el-button>
     <el-button @click="delDevices">删除</el-button>
     </div>
 </template>
   
 <style>
+.btn-group{
+    margin: 0 auto;
+    margin-top: 30px;
+}
 </style>

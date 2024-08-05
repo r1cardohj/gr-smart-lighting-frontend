@@ -68,11 +68,14 @@ const handleSelect = (deviceGroups) => {
         </template>
       </el-table-column>
     </el-table>
-    <div>
+    <div class="btn-group">
       <el-button @click="">新增</el-button>
       <el-button @click="delSelectedDeviceGroup">删除</el-button>
     </div>
 </template>
 
 <style>
+.btn-group {
+  margin-top: 30px;
+}
 </style>

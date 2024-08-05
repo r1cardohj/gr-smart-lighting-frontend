@@ -4,7 +4,9 @@ import Header from '../public/Header.vue'
 </script>
 <template>
   <Header></Header>
-  <RouterView></RouterView>
+  <div style="min-width: 650px;">
+    <RouterView></RouterView>
+  </div>
 </template>
 
 <style scoped>

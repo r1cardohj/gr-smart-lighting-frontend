@@ -1,16 +1,25 @@
 <script setup>
 import client from '@/utils/api';
 import { ElNotification } from 'element-plus';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import router from '@/router/router';
 
 const tableData = ref([])
 const selectedData = ref([])
 
-const handleClick = () => {
-    console.log('click')
-}
+const tableCount = computed(() => {
+    return tableData.value.length
+})
 
+const onlineDeviceCount = computed(() => {
+    let count = 0
+    for (let i = 0; i < tableData.value.length; i++) {
+        if (tableData.value[i].isOnline) {
+            count++
+        }
+    }
+    return count;
+})
 
 const handleSelect = (devices) => {
     selectedData.value = devices
@@ -83,7 +92,20 @@ onMounted(() => {
   
 </script>
 <template>
-    <el-table :data="tableData" style="width: 100%" @selection-change="handleSelect">
+    <div class="dashboard">
+     <el-row style="margin: 0 auto;">
+    <el-col :span="6">
+      <el-statistic title="All Devices" :value="tableCount" />
+    </el-col>  
+    <el-col :span="6">
+      <el-statistic title="Online Devices" :value="onlineDeviceCount"/>
+    </el-col>
+    <el-col :span="6">
+      <el-statistic title="Online Devices" :value="onlineDeviceCount"/>
+    </el-col>
+  </el-row>
+    </div>
+    <el-table :data="tableData" style="width: 100%;margin-top: 20px;" @selection-change="handleSelect">
       <el-table-column fixed type="selection" width="55" />
       <el-table-column fixed prop="id" label="ID" width="50" />
       <el-table-column fixed prop="name" label="设备名" width="120" />
@@ -116,5 +138,8 @@ onMounted(() => {
 .btn-group{
     margin: 0 auto;
     margin-top: 30px;
+}
+.dashboard {
+    width: 100%;
 }
 </style>

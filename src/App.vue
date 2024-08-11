@@ -1,5 +1,5 @@
 <script setup>
-import DeviceTable from './components/DeviceTable.vue';
+import DeviceTable from './components/device/DeviceTable.vue';
 import Header from '../public/Header.vue'
 </script>
 <template>

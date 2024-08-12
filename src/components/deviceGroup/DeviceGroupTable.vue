@@ -10,15 +10,21 @@ console.log('click')
 
 const tableData = ref([])
 const selectedData = ref([])
+const pagination = ref({
+    page: 1,
+    pageSize: 5,
+    totalCount: 0
+})
 
 const tableCount = computed(() => {
-  return tableData.value.length
+  return pagination.value.totalCount
 })
 
 const getDeviceGroups = () => {
-  client.get("/device/group/")
+  client.get(`/device/group/?page=${pagination.value.page}&perPage=${pagination.value.pageSize}`)
   .then( (resp) => {
     tableData.value = resp.data.data
+    pagination.value = resp.data.pagination
   }) 
 }
 
@@ -56,29 +62,24 @@ onMounted(() => {
 const handleSelect = (deviceGroups) => {
   selectedData.value = deviceGroups;
 }
-
+const handlePageChange = ((num) => {
+  pagination.value.page = num
+  getDeviceGroups()
+})
 
 </script>
 <template>
-   <el-row style="margin: 0 auto;">
-    <el-col :span="6">
-      <el-statistic title="DeviceGroup" :value=tableCount />
+  <h2 class="title-1">概览</h2>
+   <el-row class="panel">
+    <el-col :span="12">
+      <el-statistic title="All DeviceGroups" :value=tableCount />
     </el-col>
-    <el-col :span="6">
-      <el-statistic :value="138">
-        <template #title>
-          <div style="display: inline-flex; align-items: center">
-            good
-          </div>
-        </template>
-        <template #suffix>/100</template>
-      </el-statistic>
-    </el-col>
-    <el-col :span="6">
+    <el-col :span="12">
       <el-statistic title="Online Devices" />
     </el-col>
   </el-row>
-    <el-table :data="tableData" style="width: 100%" @selection-change="handleSelect">
+  <h2 class="title-2">明细</h2>
+    <el-table :data="tableData" style="width: 100%;margin-top: 20px" @selection-change="handleSelect">
       <el-table-column fixed type="selection" width="55" />
       <el-table-column fixed prop="id" label="ID" width="50" />
       <el-table-column prop="name" label="组名" width="120" />
@@ -92,6 +93,13 @@ const handleSelect = (deviceGroups) => {
         </template>
       </el-table-column>
     </el-table>
+    
+    <el-pagination class="pagination" size="small" layout="prev, pager, next" 
+    :total="pagination.totalCount"
+    :page-size="pagination.pageSize"
+    :current-page="pagination.page"
+    @current-change="handlePageChange"
+    />
     <div class="btn-group">
       <el-button @click="router.push('/device/group/create')">新增</el-button>
       <el-button @click="delSelectedDeviceGroup">删除</el-button>
@@ -101,5 +109,9 @@ const handleSelect = (deviceGroups) => {
 <style>
 .btn-group {
   margin-top: 30px;
+}
+.title-1 ,.title-2{
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 </style>

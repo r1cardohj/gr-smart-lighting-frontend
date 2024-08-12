@@ -3,6 +3,7 @@
 </script>
 <template>
 <header>
+    <div class="content">
     <h1 id="title">GR Smart Lighting⚡</h1>
     <small><em>it's next generation the way of lighting. <br>but just a demo now...</em></small>
     <br>
@@ -14,7 +15,7 @@
         <el-breadcrumb-item>敬请期待</el-breadcrumb-item>
     </el-breadcrumb>
     </nav>
-
+    </div>
 </header>
 </template>
 <style>
@@ -25,6 +26,15 @@
 #nav {
     margin-top: 20px;
     margin-bottom: 40px;
+}
+header {
+    position: relative;
+    height: 100%;
+}
+header> .content{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
 }
 </style>
 

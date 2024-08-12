@@ -6,9 +6,14 @@ import router from '@/router/router';
 
 const tableData = ref([])
 const selectedData = ref([])
+const pagination = ref({
+    page: 1,
+    pageSize: 5,
+    totalCount: 0
+})
 
 const tableCount = computed(() => {
-    return tableData.value.length
+    return pagination.value.totalCount
 })
 
 const onlineDeviceCount = computed(() => {
@@ -27,9 +32,11 @@ const handleSelect = (devices) => {
 
 
 function getDevices() {
-    client.get('/device/').then((response) => {
+    client.get(`/device/?page=${pagination.value.page}&perPage=${pagination.value.pageSize}`)
+    .then((response) => {
        let devices = response.data.data 
        tableData.value = devices
+       pagination.value = response.data.pagination
     })
 }
 
@@ -85,6 +92,11 @@ function toEditPage(device) {
     })
 }
 
+function handlePageChange(num) {
+    pagination.value.page = num
+    getDevices()
+}
+
 
 onMounted(() => {
     getDevices()
@@ -92,19 +104,21 @@ onMounted(() => {
   
 </script>
 <template>
-    <div class="dashboard">
-     <el-row style="margin: 0 auto;">
-    <el-col :span="6">
+    <div class="">
+        <h2 class="title-1">概览</h2>
+     <el-row> 
+    <el-col :span="8">
       <el-statistic title="All Devices" :value="tableCount" />
     </el-col>  
-    <el-col :span="6">
+    <el-col :span="8">
       <el-statistic title="Online Devices" :value="onlineDeviceCount"/>
     </el-col>
-    <el-col :span="6">
-      <el-statistic title="Online Devices" :value="onlineDeviceCount"/>
+    <el-col :span="8">
+      <el-statistic title="Turned On Devices" :value="onlineDeviceCount"/>
     </el-col>
   </el-row>
     </div>
+    <h2 class="title-2">明细</h2>
     <el-table :data="tableData" style="width: 100%;margin-top: 20px;" @selection-change="handleSelect">
       <el-table-column fixed type="selection" width="55" />
       <el-table-column fixed prop="id" label="ID" width="50" />
@@ -128,6 +142,13 @@ onMounted(() => {
         </template>
       </el-table-column>
     </el-table>
+
+    <el-pagination class="pagination" size="small" layout="prev, pager, next" 
+    :total="pagination.totalCount"
+    :page-size="pagination.pageSize"
+    :current-page="pagination.page"
+    @current-change="handlePageChange"
+    />
     <div class="btn-group">
     <el-button @click="toCreatePage">新增</el-button>
     <el-button @click="delDevices">删除</el-button>
@@ -139,7 +160,11 @@ onMounted(() => {
     margin: 0 auto;
     margin-top: 30px;
 }
-.dashboard {
-    width: 100%;
+.pagination{
+    margin-top: 12px;
+}
+.title-1 ,.title-2{
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 </style>

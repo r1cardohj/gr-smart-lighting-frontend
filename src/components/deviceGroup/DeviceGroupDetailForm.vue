@@ -5,6 +5,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const curDeviceGroupId = useRoute().params.id
+const dtFormVisible = ref(false)
 
 const deviceGroup = ref({
     name: "",
@@ -13,14 +14,7 @@ const deviceGroup = ref({
 
 const deviceGroupMenbers = ref([])
 
-const deviceGrpMenberString = computed(() => {
-    let res = ""
-    for (let i = 0; i = deviceGroupMenbers.value.length; i++) {
-        res += deviceGroupMenbers.value[i].name
-    }
-    return res
-})
-
+const deviceNotInGroup = ref([])
 
 function getDeviceGroup() {
     client.get(`/device/group/${curDeviceGroupId}`)
@@ -61,6 +55,18 @@ function leaveGroup(deviceId) {
     })
 }
 
+function addMenberClickHandler() {
+    dtFormVisible.value = true
+    getAllDeviceNotInCurGroup()
+}
+
+function getAllDeviceNotInCurGroup() {
+    client.get('/device/?page=1&perPage=10000')
+    .then((resp) => {
+        let devices = resp.data.data
+    })
+}
+
 onMounted(() => {
     getDeviceGroup()
     getDeviceGroupMenbers()
@@ -73,7 +79,12 @@ onMounted(() => {
         <el-descriptions-item label="设备组名">{{ deviceGroup.name }}</el-descriptions-item>
         <el-descriptions-item label="描述">{{ deviceGroup.description}}</el-descriptions-item>
     </el-descriptions>
-    <p class="group-detail-title">组员详情<el-button style="float: right;"  type="primary">Add</el-button></p>
+    <p class="group-detail-title">组员详情
+        <el-button style="float: right;"  type="primary" @click="addMenberClickHandler">Add</el-button>
+    </p>
+    <el-dialog v-model="dtFormVisible" title="Group Join" width="700">
+        <el-transfer v-model="deviceGroupMenbers" :data="deviceNotInGroup" />
+    </el-dialog>
     <el-scrollbar max-height="400px">
     <p v-for="item in deviceGroupMenbers" :key="item" class="scrollbar-demo-item">
         <span class="del"><a @click="leaveGroup(item.id)">X</a></span>
@@ -92,8 +103,8 @@ onMounted(() => {
     margin-right: 1rem;
 }
 .del a{
-    color: red;
-    font-size: large;
+    color: gray;
+    font-size: medium;
 }
 .del {
     margin-left: 1em;

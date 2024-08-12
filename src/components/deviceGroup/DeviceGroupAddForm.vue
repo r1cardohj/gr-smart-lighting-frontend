@@ -30,6 +30,7 @@ function onSubmit() {
 </script>
 
 <template>
+    <h2 class="title">新增</h2>
     <el-form
     ref="deviceGroupFormRef"
     style="max-width: 800px;"
@@ -54,5 +55,8 @@ function onSubmit() {
 <style>
 #addForm {
     margin-left: 0;
+}
+.title {
+    margin-bottom: 20px;
 }
 </style>

@@ -1,7 +1,7 @@
 <script setup>
 import client from '@/utils/api';
 import { errorMes, successMes } from '@/utils/util';
-import { computed, onMounted, ref } from 'vue';
+import { watch, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const curDeviceGroupId = useRoute().params.id
@@ -14,7 +14,12 @@ const deviceGroup = ref({
 
 const deviceGroupMenbers = ref([])
 
-const deviceNotInGroup = ref([])
+
+// 存在于设备组中的设备 - 用于设备组添加窗口
+const deviceGroupMenbersJoinFormData = ref([])
+
+//不在该设备组中的设备
+const deviceNotInGroupJoinFormData = ref([])
 
 function getDeviceGroup() {
     client.get(`/device/group/${curDeviceGroupId}`)
@@ -40,10 +45,10 @@ function getDeviceGroupMenbers() {
     })
 }
 
-function leaveGroup(deviceId) {
+function leaveGroup(deviceIds) {
     client.post("/device/group/leave", {
         groupId: curDeviceGroupId,
-        deviceIdSet: [deviceId]
+        deviceIdSet: deviceIds
     })
     .then((resp) => {
         if (resp.data.code == "200") {
@@ -55,6 +60,23 @@ function leaveGroup(deviceId) {
     })
 }
 
+function joinGroup(deviceIds) {
+    client.post("/device/group/join", {
+        groupId: curDeviceGroupId,
+        deviceIdSet: deviceIds
+    })
+    .then((resp) => {
+        if (resp.data.code == "200") {
+            successMes("加入成功")
+            getDeviceGroupMenbers()
+        } else {
+            errorMes("加入失败")
+        }
+    })
+}
+
+
+
 function addMenberClickHandler() {
     dtFormVisible.value = true
     getAllDeviceNotInCurGroup()
@@ -64,8 +86,32 @@ function getAllDeviceNotInCurGroup() {
     client.get('/device/?page=1&perPage=10000')
     .then((resp) => {
         let devices = resp.data.data
+
+        deviceGroupMenbersJoinFormData.value = []
+        deviceNotInGroupJoinFormData.value = devices.map((d) => {
+            return {
+                key: d.id,
+                label: d.name
+            }
+        })
+        deviceNotInGroupJoinFormData.value.forEach((elem) => {
+            if (deviceGroupMenbers.value.find((device)=> device.id == elem.key)){
+                console.log(elem)
+                deviceGroupMenbersJoinFormData.value.push(elem.key)
+            }
+        })
+        
     })
 }
+
+function changeGroupHandler(value, direction, moveKeys) {
+    if (direction === "left") {
+        leaveGroup(moveKeys)
+    } else {
+        joinGroup(moveKeys)
+    }
+}
+
 
 onMounted(() => {
     getDeviceGroup()
@@ -83,11 +129,15 @@ onMounted(() => {
         <el-button style="float: right;"  type="primary" @click="addMenberClickHandler">Add</el-button>
     </p>
     <el-dialog v-model="dtFormVisible" title="Group Join" width="700">
-        <el-transfer v-model="deviceGroupMenbers" :data="deviceNotInGroup" />
+        <el-transfer 
+        v-model="deviceGroupMenbersJoinFormData"
+        :data="deviceNotInGroupJoinFormData"
+        :titles="['待加入设备', '已加入设备']"
+        @change="changeGroupHandler"
+         />
     </el-dialog>
     <el-scrollbar max-height="400px">
     <p v-for="item in deviceGroupMenbers" :key="item" class="scrollbar-demo-item">
-        <span class="del"><a @click="leaveGroup(item.id)">X</a></span>
       <span class="bold">设备名:</span> {{ item.name }} <span class="bold">设备编号:</span> {{ item.deviceCode }} 
     </p>
   </el-scrollbar>

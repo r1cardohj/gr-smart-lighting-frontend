@@ -12,7 +12,7 @@
         <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/' }">设备</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: '/group'}">设备组</el-breadcrumb-item>
-        <el-breadcrumb-item>敬请期待</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/control'}">设备控制</el-breadcrumb-item>
     </el-breadcrumb>
     </nav>
     </div>

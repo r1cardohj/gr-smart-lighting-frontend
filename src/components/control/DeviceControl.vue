@@ -11,7 +11,7 @@ const lights = ref([])
 const sseSession = ref([])
 
 async function subscribeRuntime(deviceId) {
-    let sse = new EventSource(`http://127.0.0.1:8080/device/runtime/control/sse/${deviceId}`)
+    let sse = new EventSource(`http://127.0.0.1:8080/device/runtime/control/sse/register/${deviceId}`)
     sseSession.value.push(sse)
     sse.onmessage= (({data}) => {
         let { status, brightness, deviceId } = JSON.parse(data)

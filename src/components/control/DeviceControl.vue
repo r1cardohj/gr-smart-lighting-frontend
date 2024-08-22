@@ -51,13 +51,13 @@ function makeLight(runtime) {
                     status: runtime.status,
                     brightness: runtime.brightness
                 }))
+                lights.value.sort((a, b) => a.value.deviceId - b.value.deviceId)
                 subscribeRuntime(device.id)
             }
         }
         else
             errorMes(`获取设备id: ${deviceId}`)
     })
-    return device
 }
 
 
@@ -73,7 +73,8 @@ onBeforeUnmount(() => {
 
 <template>
     <el-row :gutter="20">
-        <el-col v-for="(light, idx) in lights" :span="6" :key="light.value.deviceId">
+        
+        <el-col v-for="(light, idx) in lights" :span="4" :key="light.value.deviceId">
             <Light v-model="lights[idx].value"></Light>
         </el-col>
     </el-row>

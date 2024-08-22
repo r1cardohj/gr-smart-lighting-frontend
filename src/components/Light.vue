@@ -6,9 +6,9 @@ const model = defineModel()
 
 <template>
         <div class="light" >
-            <div class="blub" :class="{on: model.status}"></div>
+            <div class="blub" :class="{on: model.status}" :style="{filter: `brightness(${model.brightness * 0.012})`}"></div>
             <p class="text">{{ model.name }}</p>
-            <el-slider v-model="model.brightness" show-stops />
+            <el-slider v-model="model.brightness" size="small" show-stops />
         </div>
 </template>
 

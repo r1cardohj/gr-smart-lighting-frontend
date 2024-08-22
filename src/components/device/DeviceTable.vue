@@ -16,15 +16,8 @@ const tableCount = computed(() => {
     return pagination.value.totalCount
 })
 
-const onlineDeviceCount = computed(() => {
-    let count = 0
-    for (let i = 0; i < tableData.value.length; i++) {
-        if (tableData.value[i].isOnline) {
-            count++
-        }
-    }
-    return count;
-})
+const onlineDeviceCount = ref(0)
+const statusOnDeviceCount = ref(0)
 
 const handleSelect = (devices) => {
     selectedData.value = devices
@@ -40,16 +33,34 @@ function getDevices() {
     })
 }
 
+function getOnlineDeviceCount() {
+    client.get(`/device/countOnline`)
+    .then((resp) => {
+        onlineDeviceCount.value = resp.data.data.count
+    })
+}
+
+function getOnDeviceCount() {
+    client.get(`/device/runtime/countOn`)
+    .then((resp) => {
+        statusOnDeviceCount.value = resp.data.data.count
+    })
+}
+
 
 function connectOrClose(device) {
     client.post("/device/update", {
         "id": device.id,
         "isOnline": device.isOnline 
-    }).then( () => {ElNotification({
+    }).then( () => {
+        ElNotification({
         title: 'Success',
         message: "Switch success.",
         type: "success"
-    })}).catch(
+    })
+    getOnlineDeviceCount()
+    }
+    ).catch(
         (err) => {
             ElNotification({
                 title: 'Error',
@@ -100,6 +111,8 @@ function handlePageChange(num) {
 
 onMounted(() => {
     getDevices()
+    getOnlineDeviceCount()
+    getOnDeviceCount()
 })
   
 </script>
@@ -114,7 +127,7 @@ onMounted(() => {
       <el-statistic title="Online Devices" :value="onlineDeviceCount"/>
     </el-col>
     <el-col :span="8">
-      <el-statistic title="Turned On Devices" :value="onlineDeviceCount"/>
+      <el-statistic title="Turned On Devices" :value="statusOnDeviceCount"/>
     </el-col>
   </el-row>
     </div>

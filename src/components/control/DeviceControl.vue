@@ -10,8 +10,11 @@ const lights = ref([])
 
 const sseSession = ref([])
 
-async function subscribeRuntime(deviceId) {
-    let sse = new EventSource(`http://127.0.0.1:8080/device/runtime/control/sse/register/${deviceId}`)
+let sseReConnTime = 0
+
+async function subscribeRuntime(client) {
+    let sse = new EventSource(`http://127.0.0.1:8080/device/runtime/control/sse/register/${client}`)
+    sse.retry = 1000;
     sseSession.value.push(sse)
     sse.onmessage= (({data}) => {
         let { status, brightness, deviceId } = JSON.parse(data)
@@ -19,6 +22,16 @@ async function subscribeRuntime(deviceId) {
         if (runtime) { 
             runtime.value.status = status
             runtime.value.brightness = brightness
+        }
+    })
+    sse.onerror((e) => {
+        console.log(e)
+        sse.close()
+        if (sseReConnTime < 6) {
+            sse = new EventSource(`http://127.0.0.1:8080/device/runtime/control/sse/register/${client}`)
+            sseReConnTime++
+        } else {
+            console.error("sse is re connect to many time.")
         }
     })
 }
@@ -52,7 +65,6 @@ function makeLight(runtime) {
                     brightness: runtime.brightness
                 }))
                 lights.value.sort((a, b) => a.value.deviceId - b.value.deviceId)
-                subscribeRuntime(device.id)
             }
         }
         else
@@ -64,6 +76,7 @@ function makeLight(runtime) {
 getDevicesRunTime()
 
 onMounted(() => {
+    subscribeRuntime("1")
 })
 
 onBeforeUnmount(() => {

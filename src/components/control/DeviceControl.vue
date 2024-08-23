@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import Light from '../Light.vue';
 import client from '@/utils/api';
 import { errorMes } from '@/utils/util';
@@ -12,8 +12,9 @@ const sseSession = ref([])
 
 let sseReConnTime = 0
 
-async function subscribeRuntime(client) {
-    let sse = new EventSource(`http://127.0.0.1:8080/device/runtime/control/sse/register/${client}`)
+async function subscribeRuntime() {
+    let clientId = self.crypto.randomUUID()
+    let sse = new EventSource(`http://127.0.0.1:8080/device/runtime/control/sse/register/${clientId}`)
     sse.retry = 1000;
     sseSession.value.push(sse)
     sse.onmessage= (({data}) => {
@@ -28,7 +29,7 @@ async function subscribeRuntime(client) {
         console.log(e)
         sse.close()
         if (sseReConnTime < 6) {
-            sse = new EventSource(`http://127.0.0.1:8080/device/runtime/control/sse/register/${client}`)
+            sse = new EventSource(`http://127.0.0.1:8080/device/runtime/control/sse/register/${clientId}`)
             sseReConnTime++
         } else {
             console.error("sse is re connect to many time.")
@@ -76,7 +77,7 @@ function makeLight(runtime) {
 getDevicesRunTime()
 
 onMounted(() => {
-    subscribeRuntime("1")
+    subscribeRuntime()
 })
 
 onBeforeUnmount(() => {

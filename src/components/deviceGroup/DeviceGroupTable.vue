@@ -3,10 +3,6 @@ import { computed, onMounted, ref } from 'vue';
 import client from '@/utils/api';
 import { errorMes, successMes } from '@/utils/util';
 import router from '@/router/router';
-import { SCOPE } from 'element-plus';
-const handleClick = () => {
-console.log('click')
-}
 
 const tableData = ref([])
 const selectedData = ref([])
@@ -52,8 +48,6 @@ const delSelectedDeviceGroup = () => {
     delDeviceGroups(deviceGroupId)
   }
 }
-
-
 
 onMounted(() => {
   getDeviceGroups()

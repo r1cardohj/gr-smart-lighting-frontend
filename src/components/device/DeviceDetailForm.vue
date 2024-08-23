@@ -1,12 +1,13 @@
 <script setup>
 import client from '@/utils/api';
-import { errorMes } from '@/utils/util';
+import { errorMes, successMes } from '@/utils/util';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const curDeviceId = useRoute().params.id
 const curDevice = ref({})
 const curDeviceRumtime = ref({})
+const curDeviceStatus = ref(false)
 
 function getDeviceInfo() {
     client.get(`/device/${curDeviceId}`)
@@ -21,12 +22,44 @@ function getDeviceInfo() {
 function getDeviceRuntime() {
     client.get(`/device/runtime/${curDeviceId}`)
     .then((resp) => {
-        if (resp.data.code == "200")
+        if (resp.data.code == "200") {
             curDeviceRumtime.value = resp.data.data
+            curDeviceStatus.value = resp.data.data.status === 1 ? true : false
+            console.log(curDeviceStatus.value)
+        }
         else
             errorMes(`device: ${curDeviceId} get runtime failed.`)
     })
 }
+
+function handlerSwitchChange(status) {
+    const base_path = "/device/runtime/control/"
+    const path = base_path + (status? "on" : "off")
+    client.post(path, {deviceId: curDeviceId})
+    .then((resp) => {
+        if (resp.data.code == "200") {
+            successMes("操作成功")
+            getDeviceRuntime()
+        } else {
+            errorMes(`操作失败: ${resp.data.msg}`)
+            curDeviceRumtime.value = !curDeviceRumtime.value
+        }
+    })
+}
+
+function handleSliderChange(number) {
+    client.post("/device/runtime/control/brightness", {deviceId: curDeviceId, brightness: number})
+    .then((resp) => {
+        if (resp.data.code == "200") {
+            successMes("操作成功")
+        } else {
+            errorMes(`操作失败: ${resp.data.msg}`)
+        }
+        getDeviceRuntime()
+    })
+}
+
+
 
 onMounted(() => {
     getDeviceInfo()
@@ -126,11 +159,17 @@ onMounted(() => {
 </el-descriptions>
 <p class="group-detail-title">开关灯
 </p>
-    <el-switch v-model="curDeviceRumtime.status" inline-prompt size="large" active-text="开灯" inactive-text="关灯" />
+    <el-switch
+     v-model="curDeviceStatus" 
+    inline-prompt 
+    size="large"
+    active-text="开灯"
+    inactive-text="关灯"
+    @change="handlerSwitchChange" />
 <p class="group-detail-title">亮度亮度调整</p>
 <div class="slider-demo-block">
 <span class="demonstration">当前亮度 {{ curDeviceRumtime.brightness }}%</span>
-<el-slider v-model="curDeviceRumtime.brightness" />
+<el-slider v-model="curDeviceRumtime.brightness" @change="handleSliderChange"/>
 </div>
 </template>
 

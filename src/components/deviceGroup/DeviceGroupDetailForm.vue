@@ -1,7 +1,7 @@
 <script setup>
 import client from '@/utils/api';
 import { errorMes, successMes } from '@/utils/util';
-import { watch, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const curDeviceGroupId = useRoute().params.id

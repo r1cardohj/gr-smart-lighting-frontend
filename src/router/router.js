@@ -7,13 +7,14 @@ import DeviceUpdForm from "@/components/device/DeviceUpdForm.vue"
 import DeviceGroupAddForm from "@/components/deviceGroup/DeviceGroupAddForm.vue";
 import DeviceGroupUpdForm from "@/components/deviceGroup/DeviceGroupUpdForm.vue";
 import DeviceGroupDetailForm from "@/components/deviceGroup/DeviceGroupDetailForm.vue";
-import Light from "@/components/Light.vue";
 import DeviceControl from "@/components/control/DeviceControl.vue";
+import DeviceDetailForm from "@/components/device/DeviceDetailForm.vue";
 
 const routes = [
     { path: '/', component: DeviceTable },
     { path: '/group', component: DeviceGroupTable },
     { path: '/device', component: DeviceTable },
+    { path: '/device/detail/:id', component: DeviceDetailForm},
     { path: '/device/create', component: DeviceAddForm},
     { path: '/device/edit/:id', component: DeviceUpdForm, props: true},
     { path: '/device/group/create', component: DeviceGroupAddForm},

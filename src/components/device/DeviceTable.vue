@@ -103,6 +103,12 @@ function toEditPage(device) {
     })
 }
 
+function toDetailPage(device) {
+    router.push({
+        path: `device/detail/${device.id}`
+    })
+}
+
 function handlePageChange(num) {
     pagination.value.page = num
     getDevices()
@@ -148,7 +154,7 @@ onMounted(() => {
       <el-table-column fixed="right" label="Operations" min-width="120">
         
         <template v-slot="scope">
-          <el-button link type="primary" size="small" >
+          <el-button link type="primary" size="small" @click="toDetailPage(scope.row)">
             详情
           </el-button>
           <el-button link type="primary" size="small" @click="toEditPage(scope.row)">编辑</el-button>

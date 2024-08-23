@@ -59,6 +59,17 @@ function handleSliderChange(number) {
     })
 }
 
+function handleIsOnlineSwitchChange(status) {
+    client.post("/device/update", {id: curDeviceId, isOnline: status })
+    .then((resp) => {
+        if (resp.data.code == "200") {
+            successMes("操作成功")
+        } else {
+            errorMes(`操作失败: ${resp.data.msg}`)
+        }
+        getDeviceInfo()
+    })
+}
 
 
 onMounted(() => {
@@ -77,6 +88,7 @@ onMounted(() => {
         inline-prompt
         active-text="在线"
         inactive-text="离线"
+        @change="handleIsOnlineSwitchChange"
         />
     </template>
     <el-descriptions-item
@@ -140,7 +152,7 @@ onMounted(() => {
     label-align="left"
     align="center"
     >
-    {{ curDevice.chargeBy}}
+    {{ curDevice.chargeBy }}
     </el-descriptions-item>
     <el-descriptions-item
     label="出厂日期"
@@ -166,7 +178,7 @@ onMounted(() => {
     active-text="开灯"
     inactive-text="关灯"
     @change="handlerSwitchChange" />
-<p class="group-detail-title">亮度亮度调整</p>
+<p class="group-detail-title">亮度调整</p>
 <div class="slider-demo-block">
 <span class="demonstration">当前亮度 {{ curDeviceRumtime.brightness }}%</span>
 <el-slider v-model="curDeviceRumtime.brightness" @change="handleSliderChange"/>

@@ -113,6 +113,32 @@ function changeGroupHandler(value, direction, moveKeys) {
 }
 
 
+function handleBatchOnClick() {
+    for (let device of deviceGroupMenbers.value) {
+        client.post("/device/runtime/control/on", {deviceId: device.id})
+        .then((resp) => {
+            if (resp.data.code == "200") {
+                successMes(`device ${device.id} open successfully.`)
+            } else {
+                errorMes(`device ${device.id}: control is invaild.`)
+            }
+        })
+    }
+}
+
+function handleBatchOffClick() {
+    for (let device of deviceGroupMenbers.value) {
+        client.post("/device/runtime/control/off", {deviceId: device.id})
+        .then((resp) => {
+            if (resp.data.code == "200") {
+                successMes(`device ${device.id} off successfully.`)
+            } else {
+                errorMes(`device ${device.id}: control is invaild.`)
+            }
+        })
+    }
+}
+
 onMounted(() => {
     getDeviceGroup()
     getDeviceGroupMenbers()
@@ -125,6 +151,11 @@ onMounted(() => {
         <el-descriptions-item label="设备组名">{{ deviceGroup.name }}</el-descriptions-item>
         <el-descriptions-item label="描述">{{ deviceGroup.description}}</el-descriptions-item>
     </el-descriptions>
+    <p class="group-detail-title">设备组控制</p>
+    <div class="btn-group">
+        <el-button type="success" @click="handleBatchOnClick">批量开</el-button>
+        <el-button type="danger" @click="handleBatchOffClick">批量关</el-button>
+    </div>
     <p class="group-detail-title">组员详情
         <el-button style="float: right;"  type="primary" @click="addMenberClickHandler">Add</el-button>
     </p>
@@ -141,10 +172,8 @@ onMounted(() => {
       <span class="bold">设备名:</span> {{ item.name }} <span class="bold">设备编号:</span> {{ item.deviceCode }} 
     </p>
   </el-scrollbar>
-    <div class="btn-group">
-
-    </div>
 </template>
+
 
 <style scoped>
 .bold {

@@ -60,7 +60,6 @@ function handleSliderChange(number) {
 }
 
 
-
 onMounted(() => {
     getDeviceInfo()
     getDeviceRuntime()
@@ -166,7 +165,7 @@ onMounted(() => {
     active-text="开灯"
     inactive-text="关灯"
     @change="handlerSwitchChange" />
-<p class="group-detail-title">亮度亮度调整</p>
+<p class="group-detail-title">亮度调整</p>
 <div class="slider-demo-block">
 <span class="demonstration">当前亮度 {{ curDeviceRumtime.brightness }}%</span>
 <el-slider v-model="curDeviceRumtime.brightness" @change="handleSliderChange"/>

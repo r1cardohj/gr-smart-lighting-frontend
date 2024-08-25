@@ -8,7 +8,7 @@ const model = defineModel()
         <div class="light" >
             <div class="blub" :class="{on: model.status}" :style="{filter: `brightness(${model.brightness * 0.012})`}"></div>
             <p class="text">{{ model.name }}</p>
-            <el-slider v-model="model.brightness" size="small" show-stops />
+            <p class="text">亮度: {{ model.brightness }}</p>
         </div>
 </template>
 

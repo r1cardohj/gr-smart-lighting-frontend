@@ -25,7 +25,7 @@ async function subscribeRuntime() {
             runtime.value.brightness = brightness
         }
     })
-    sse.onerror((e) => {
+    sse.onerror = ((e) => {
         console.log(e)
         sse.close()
         if (sseReConnTime < 6) {

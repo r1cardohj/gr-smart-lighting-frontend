@@ -71,7 +71,6 @@ function handleIsOnlineSwitchChange(status) {
     })
 }
 
-
 onMounted(() => {
     getDeviceInfo()
     getDeviceRuntime()

@@ -7,16 +7,16 @@ import { useRoute } from 'vue-router';
 
 const curDeviceId = useRoute().params.id
 
-  const deviceForm = ref({
-    name: '',
-    deviceCode: '',
-    specifications: '',
-    position: '',
-    lightingType: '',
-    serialNumber: '',
-    chargeBy: '',
-    exFactoryDate: '',
-    expiredDate: ''
+const deviceForm = ref({
+  name: '',
+  deviceCode: '',
+  specifications: '',
+  position: '',
+  lightingType: '',
+  serialNumber: '',
+  chargeBy: '',
+  exFactoryDate: '',
+  expiredDate: ''
 })
 
 const deviceFormRef = ref()
